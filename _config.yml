@@ -1,0 +1,33 @@
+# Permalinks
+permalink:           pretty
+
+# Setup
+title:               SimpleGuru
+tagline:             ""
+url:                 http://simple-guru.github.io/
+paginate:            1
+baseurl:             ""
+
+# Assets
+#
+# We specify the directory for Jekyll so we can use @imports.
+sass:
+  sass_dir:          _sass
+  style:            :compressed
+
+# About/contact
+author:
+  name:              Prajwal Gurumurthy
+  url:               https://in.linkedin.com/in/prajwal-g-238a883b
+  email:             simpleguru91@gmail.com
+
+# Custom vars
+version:             2.0.0
+github:
+  repo:              https://github.com/simple-guru/simple-guru.github.io
+
+# Gems
+gems:
+  - jekyll-paginate
+  - jekyll-gist
+  - jekyll-sitemap
