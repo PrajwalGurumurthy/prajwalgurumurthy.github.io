@@ -4,14 +4,6 @@ title: About
 ---
 
 
-Hi There,
+Hi,
 
-We are a bunch of tech enthu people who want to simplify the whole technology space. Simple Guru tries to explain the technology that we use in our day to day lives using simple examples and terminologies.
-
->"  If we cannot explain things in simple words, 
-    we dont know it well enough."
-
-
-
-
-
+I am a software engineer at Cisco currently working on building solutions that simplify the Video Content Metadata Management across multiple geographies for service providers. My work is centered around building microservices for the video content metadata management.I believe that simplicity is the purest form of knowledge. [simple-guru][http://simple-guru.github.io/] is my attempt to simplify the the whole computer technology space. This blog concentrates on the latest trends in topics ranging from programming, compute, algorithms, security , hardware changes,distributed systems to anything in the computers world.
