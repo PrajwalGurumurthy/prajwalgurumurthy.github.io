@@ -2,9 +2,9 @@
 permalink:           pretty
 
 # Setup
-title:               SimpleGuru
+title:               PrajwalGurumurthy
 tagline:             ""
-url:                 http://simple-guru.github.io/
+url:                 http://prajwalgurumurthy.github.io/
 paginate:            1
 baseurl:             ""
 
@@ -19,12 +19,12 @@ sass:
 author:
   name:              Prajwal Gurumurthy
   url:               https://in.linkedin.com/in/prajwal-g-238a883b
-  email:             simpleguru91@gmail.com
+  email:             prajwalg91@gmail.com
 
 # Custom vars
 version:             2.0.0
 github:
-  repo:              https://github.com/simple-guru/simple-guru.github.io
+  repo:              https://github.com/PrajwalGurumurthy/prajwalgurumurthy.github.io
 
 # Gems
 gems:
