@@ -365,6 +365,8 @@ Elements::1000000         TimeTaken::40   Threads::8
 
 {% endhighlight %}
 
+After all the Rant, we realise that iterator is faster than other methods :) As I already mentioned the goal was to get the intuition of how forkjointhreads work rather than finding an optimal solution to add array elements.But the above stats teach a very important lesson 
 
+>"Not always using multiple Threads increase the performance.Use Threads Wisely and With more Threads comes More Responsibility"
 
 
