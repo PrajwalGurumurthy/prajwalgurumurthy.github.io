@@ -240,18 +240,76 @@ public class ForkJoinTest {
 
 {% endhighlight %}
 
-The idea here is to divide the array and fork new tasks untill the THRESHOLD is reached. On reaching the THRESHOLD return the result, and start joining results up the way untill the final sum is calculated. The previous Executorservice also did the same thing. The difference is in the previous method when a thread called get on the future (sum += future1.get();) the thread was blocked untill the result was returned by the future.That meant the calling thread cannot take new tasks in the executor pool. This is where forkjoin pool shines.
+The idea here is to divide the array and fork new tasks untill the THRESHOLD is reached. On reaching the THRESHOLD return the result, and start joining results up the way untill the final sum is calculated. The previous Executorservice also did the same thing. The difference is that in the previous method, when a thread called get on the future (sum += future1.get();) the thread was blocked untill the result was returned by the future.That meant the calling thread cannot take new tasks in the executor pool. This is where forkjoin pool shines.
 
 Before we dive into the way the above example works.Lets try to understand the algorithm behind the forkjoinpool.
 
 >Stealing ain't bad: WorkSteal
 
+With ForkJoin there are three main terminologies.ForkJoinTask,ForkJoinPool and ForkJoinWorkerThread. ForkJoinPool maintains a pool of ForkJoinThreads. ForkJoinTasks are like Runnables/Callables. The forkJoinThreads are the entities that are scheduled to run on CPU. Every ForkJoinWorkerThread has its own queue to which ForkJoinTask are added as shown below.
 
+![Image1]({{ site.url }}/assets/fjt/fj1.png)
+
+<p>
+1.  When a ForkJoinTask is added to the queue, the ForkJoinTask is dequeued from the head of the queue and the ForkJoinWorkerThread starts executing the ForkJoinTask.
+
+2.  If the current ForkJoinTask in execution forks [firstHalf.fork() and secondHalf.fork()], new ForkJoinTasks are added to the same workers queue and the ForkJoinWorkerThread continues its execution.On completing the execution it can pick new tasks from its queue.
+
+3.  These new tasks in the queue can be picked up by the other ForkJoinWorkerThread from the back of the queue and start execution.This is called the worksteal approach.Stealing from the back of the queue simplifies the problem of mutiple threads trying to dequeue from the same end.
+</p>
+
+>Still not Impresssed!!! Welcome The awesomeness of join()
+
+The traditional implementation of join causes the current thread to wait untill it is notified. Similar situation happened when future.get() was called in the executor solution, the calling thread was blocked untill get() returned.
+
+The new cool implementation of join() in ForkJoinWorkerThread solves this in a clever way.
+<p>
+1.  If there are new tasks in the queue, then it will not wait but instead it dequeues a task and start the execution.
+2.  If there are no tasks in its queue or in its neighbours queue,then the ForkJoinWorkerThread will wait untill the corresponding task is done on which join was called.
+</p>
+
+>The question to be asked is how does the thread which calls join(), get the results from the corresponding task on which join was called (sum += firstHalf.join();) without getting blocked.
+
+In the above array elements sum problem, we had used the divide and conquer technique. Start by dividing the problem to the smallest possible subproblem[THRESHOLD], then compute the sum and return the sum. This goes up the chain untill the final sum of array is computed. 
+
+![Image1]({{ site.url }}/assets/fjt/fj2.png)
+
+
+Its important to note that as and when new subtasks(ForkJoinTasks) are forked, It is possible that the other ForkJoinWorkerThread in the pool can steal these tasks and start execution. 
+
+{% highlight text %}
+
+1.  How does the current ForkJoinWorkerThread join the result from the task which is executed by other ForkJoinWorkerThread?
+2.  Also the current ForkJoinWorkerThread picks up new tasks from its queue or from neighbours queues if there are any.
+
+{% endhighlight %}
+
+For the same problem above lets take a scenario where there are 2 forkjoinworkerthreads in pool.Lets analyse the queue state as and when addtasks are created, added and stolen.
+
+![Image1]({{ site.url }}/assets/fjt/fj3.png)
+
+
+When executing AT1, two taks AT2 and AT3 was forked and join was called on AT2 and AT3.AT2 is again picked by forkjoinworkerthread1 and AT3 was stolen by forkjoinworkerthread2.The point to be noted here is AT2 getting picked by forkjoinworkerthread1 eventhough AT1 is not completed and is waiting for results from AT2 and AT3.
+
+>Q&A
+>What happens when join is called on the ForkJoinTask?
+
+Unlike join() of normal java threads which blocks the calling thread untill it is notified, Join() in ForkJoinWorkerThread is a bit different. The forkJoinWorkerthread checks if the current task is completed. If not tries to remove and execute the task from the workqueue.If you look for doJoin() in ForkJointask,awaitJoin() in forkjoinpool and tryRemoveAndExec() functions of workqueue class you would get a better understanding of how this works. 
+
+To answer the question of how new tasks are picked up eventhough the current task is not completed and later continue from where it had left off,
+The important thing to notice is that the way the previous unfinished task state is preserved while taking the new tasks from the queue is by <b>callstack</b>.Just recall how function call is handled. when a function is called first return address is stored and then the stack frame (which included the registry state, variables and object state inside that function).
+
+![Image1]({{ site.url }}/assets/fjt/fj4.jpeg)
+
+ >How does the current ForkJoinWorkerThread join the result from the task which is executed by other ForkJoinWorkerThread?
+ 
+ There is a isdone() method in ForkJoinTask which checks if the task is complete. So when join() is called the join function checks if the task is done , if it is then return the result.
+ 
 
 
 >Stats
 
-{% highlight code %}
+{% highlight text %}
 
 Iterator:
 
