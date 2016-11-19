@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Learning Machines for the Multiplication of 2 numbers
+description: Not all problems can be solved by programming a computer.Some problems require a computer to learn to solve by itself.
 ---
 
 > Challenge the "Mighty" computers
@@ -29,7 +30,7 @@ Since the computers are programmed I would know if the computer broke any of the
 How can a computer solve this? It is not supposed to do repititive addition or division to find out the answer.A friend of mine is a decent programmer. He is gonna make the computer solve this.
 
 >Random
-
+gi
 TADA!!!! Computers are fast in doing a particular operation. So my friend decided to use the random number generatin method to solve this.
 
 Repeatedly generate random numbers to find out for what value of "b" the result is 20.
