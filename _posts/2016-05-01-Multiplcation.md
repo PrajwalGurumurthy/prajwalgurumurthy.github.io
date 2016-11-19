@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Man vs the Machines for the Multiplication of 2 numbers
+title: Learning Machines for the Multiplication of 2 numbers
 ---
 
 > Challenge the "Mighty" computers
@@ -25,7 +25,10 @@ I know that the computers are smart. Unfortunately we are not supposed to use ad
 example: 
    b= result/a; is not allowed
 
+Since the computers are programmed I would know if the computer broke any of the above rules.Unfortunately for the computer/anyone for that matter would not know even if I break the law since they cannot peak into my brain and figure out the algorithm.
 How can a computer solve this? It is not supposed to do repititive addition or division to find out the answer.A friend of mine is a decent programmer. He is gonna make the computer solve this.
+
+>Random
 
 TADA!!!! Computers are fast in doing a particular operation. So my friend decided to use the random number generatin method to solve this.
 
