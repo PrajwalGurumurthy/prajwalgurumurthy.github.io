@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Learning Machines for the Multiplication of 2 numbers
+title: Self Learning Machines for the Multiplication of 2 numbers
 description: Not all problems can be solved by programming a computer.Some problems require a computer to learn to solve by itself.
 ---
 
