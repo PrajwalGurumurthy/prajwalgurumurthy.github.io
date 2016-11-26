@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Slicing, Dicing and Gluing of Content Metadata in a Distributed way
-description: One of the common problem in Metadata Gluer is to glue data piece by piece.Also have an active-active deployment for metadata gluer for scalability and availability.
+title: Gluing the Sliced/Diced Metadata in a Distributed way
+description: To slice and dice is to break a body of information down into smaller parts. Gluing them back using an active-active deployment for scalability and availability is quiet a challenging task.
 ---
 > Problem Description
 
