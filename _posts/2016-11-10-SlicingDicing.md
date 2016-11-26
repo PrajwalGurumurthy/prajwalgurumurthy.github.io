@@ -19,7 +19,7 @@ Before we get into the active-active solution, lets try to understand the  Activ
 
 ![Image1]({{ site.url }}/assets/sd/sd2.png)
 
-<p>
+{% highlight text %}
 Pros:
 1.  Easy Deployment Model
 2.  Very Simple implementation.All the Gluer has to do is join pieces as they arrive.
@@ -32,7 +32,8 @@ Cons:
 4.  Higher Maintainance iwth large number of deployments
 5.  Not suitable for SAAS kind of model
 6.  The granular updates (C1P1...CnPn) are queued for long time since there is only a single instance processing these updates.Hence downstream components receive the updates very slowly.As a result takes larger time for update propogation downstream.
-</p>
+
+{% endhighlight %}
 
 That brings us to the active active solution which addresses all these concerns.
 
