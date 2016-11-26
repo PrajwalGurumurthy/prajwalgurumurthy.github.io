@@ -19,13 +19,18 @@ Before we get into the active-active solution, lets try to understand the  Activ
 
 ![Image1]({{ site.url }}/assets/sd/sd2.png)
 
+>Pros and Cons
+<b>Pros</b>
+
 {% highlight text %}
-Pros:
 1.  Easy Deployment Model
 2.  Very Simple implementation.All the Gluer has to do is join pieces as they arrive.
 3.  Suitabe when the updates are infrequent and data load is less.
+{% endhighlight %}
 
-Cons:
+<b>Cons</b>
+
+{% highlight text %}
 1.  Does not scale with data load.
 2.  Multi tenancy will require separate instances of gluer for each tenant. Even then it might not scale with higher data load per tenant.
 3.  Costlier deployment if the number of tenants are more.
@@ -70,10 +75,11 @@ C1P1    : C1 is in the hash range, processes the C1P1 event and glues the update
 C20P1   : C20 is in the hash range, processes the C20P1 event and glues the update in C20.
 C1P2    : C1 is in the hash range, processes the C1P2 event and glues the update in C1.
 C1P3    : C1 is in the hash range, processes the C1P3 event and glues the update in C1.
-<b>[Note the updates C1P3 is applied only after C1P2 making sure that C1 is in consitent state]</b>
+
+[Note the updates C1P3 is applied only after C1P2 making sure that C1 is in consitent state]
 
 C20P2   : C20 is in the hash range, processes the C20P2 event and glues the update in C20.
-C40P1   : C40 is in not the hash range, 
+C40P1   : C40 is in not the hash range, Drops this event.[This will be processed by any one of the other gluer instances]
 C30P2   : C30 is in the hash range, processes the C30P2 event and glues the update in C30.
 C30P3   : C30 is in the hash range, processes the C30P3 event and glues the update in C30.
 C1P4    : C1 is in the hash range, processes the C1P4 event and glues the update in C1.
@@ -83,7 +89,39 @@ C20P3   : C20 is in the hash range, processes the C20P3 event and glues the upda
 
 Similarly all the other instances filters the events based on their hash range and process the events.
 
+So far so good. But still it doesn't fly. We need to figure out the following.
+
+{% highlight text %}
+How can the nodes determine the hashrange themselves? 
+How can nodes update their hashrange when new nodes are added/deleted?
+How do we handle the failure of nodes?
+How do we scale based on load?
+{% endhighlight %}
+
+>How can the nodes determine the hashrange themselves?
+
+>How can nodes update their hashrange when new nodes are added/deleted?
+
+>How do we handle the failure of nodes?
+
+>How do we scale based on load?
+
+>Pros and Cons
+
+<b>Pros</b>
+{% highlight text %}
+1.  Handles large data loads
+2.  Suitable for multi tenant deployment
+3.  Updates are propogated to downstream components faster.
+4.  No separate deployment needed for each tenant
+5.  Suitable for SAAS kind of model
+{% endhighlight %}
+
+<b>Cons</b>
+{% highlight text %}
+1.  Additional infra like messsage bus is needed.
+2.  Complexity in handling aspects like node discovery,hash range distribution, failure handling.
+{% endhighlight %}
 
 
-
-
+We analyzed the pros and cons of Active/Passive and Active/Active approach of solving the gluing of content metadata.The Active/Passive does solve the problem in a simple way but it clearly doesn't scale with load.If there is a need to support multitenant where the data load will be higher active/active approach is the way. But it comes with its own baggage. The decision clearly depends on the requirement.
