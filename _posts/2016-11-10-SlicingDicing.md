@@ -89,22 +89,84 @@ C20P3   : C20 is in the hash range, processes the C20P3 event and glues the upda
 
 Similarly all the other instances filters the events based on their hash range and process the events.
 
-So far so good. But still it doesn't fly. We need to figure out the following.
+> Lets work out the details.
+
+<b>Establishing communication among the Nodes</b>
+
+One of the key requirement of any distributed technology is to have some sort of communication among the nodes for knowing each other and also for exchanging some information among themselves to co-ordinate.There are many ways of achieving this.Example Gossip Protocol used in cassandra which is fairly extensive and complicated one which is not required in our case.One Simple way is by using a centralised persistance to which all the nodes have access to and each node updating its information in that persistance.
+
+<b>Adding a new Node to the cluster</b> or <b>When a node dies in the cluster</b>
+
+There are many approaches that can be used.One of the simple approach is to assign the nodes a sequence number as they are added as shown below.
+{% highlight text %}
+
+Current state of Gluer Cluster
+GluerInstanceId     NodeId
+
+Gluer-1782              1
+Gluer-1572              2
+Gluer-1682              3
+
+Add a new Node Gluer-1192 
+
+Gluer-1192              4
+
+{% endhighlight %}
+
+<p>
+Note the Gluer "instanceId" doesn't matter, it can be anything. But the sequence number matters.The sequence number can also indicate the nodes slot in the cluster.The new node can compute the sequence number by itself by refering the current state of cluster in the centralised persistence.
+<br>
+When the node dies in the middle of processing,all the resources that fall under the hash range of this node will not be processed untill the node comes back. When the node comes back or a new node is added[which is the same], while selecting the sequence number it should select the empty slot and resume processing the resources from that queue.
+</p>
+
+<b>Queue Creation</b>
+
+Once the node determine its nodeID , It checks if the queue with name NodeId exists. If it exists it attachs to that queue and starts processing.If not it creates a new queue with name NodeID.
+
+<b>So far so good. But still it doesn't fly. We need to figure out the following.</b>
 
 {% highlight text %}
 How can the nodes determine the hashrange themselves? 
 How can nodes update their hashrange when new nodes are added/deleted?
 How do we handle the failure of nodes?
 How do we scale based on load?
+Isn't this over engineering?
 {% endhighlight %}
+
 
 >How can the nodes determine the hashrange themselves?
 
->How can nodes update their hashrange when new nodes are added/deleted?
+Assuming that the nodes have determine their IDs ,when the events arrive in the queue. they can determine if that event needs to be processed or not themselves by a simple math as given below.
+
+{% highlight text %}
+
+Long hash = (long) Math.abs(eventId.hashCode());//Compute the HashCode of the eventId
+int nodeId = (((int) (Math.abs(hash) % totalNodes)) + 1);//Get the nodeId using a simple modulo function
+
+if(nodeId == itsNodeId)
+    then process
+    else reject
+end if
+
+{% endhighlight %}
+
+Note in the previous discussion we had assigned contiious hash range (1-30,31-60). But the above method is a much better alternative which distributes the load well.
+
+>How can nodes update their hashrange when new nodes are added/deleted? or How do we scale based on load?
+
+It might be required to add new nodes to cluster when there is load in the system.However the above method cannot scale up/down in accordance to the load.It is still an active-active solution but it doesn't scale up/down.:( 
+
+Adding a new node to the cluster during high load is also carrying a subtle side effect. According to the Hashing approach, when a new node is added all the nodes recompute their hashrange. If you think for a minute and workout, we can clearly spot a problem. Since the hashrange has changed, all the nodes start dropping the resources that belong to the new node [i.e. the nodes start droping the resources which are not in their range which might have been in their range before]. As a result all the updates of resources falling under the new node are lost. A new node has to be added only when all the queues are empty. Clearly this is not auto scalable since we would like to add a new node when there is lot of load in the system and not when there is no load.[Note : Work in progress to figure out a way of auto scaling.]
 
 >How do we handle the failure of nodes?
 
->How do we scale based on load?
+The failure of nodes is still handled with the above approach.If a node fails, then all the updates of contents that fall in its hash range are not propogated.But when the node comes back/new node is added(which is the same) , takes the sequence number of the previously died node, and hence can start processing the events just like before.
+
+Well the most important question.....
+
+>Isn't this over engineering?
+
+Well that is subjective. If something is engineered for the sake of it and it doesnt serve any purpose, then it is over engineering.But If something is done to solve a pertinent problem then coining it as over enginnering is incorrect.Also most of the approach taken above is very simple to serve the required purpose.The right questing to ask is "Is it required?". That brings us to the following section.
 
 >Pros and Cons
 
@@ -121,7 +183,9 @@ How do we scale based on load?
 {% highlight text %}
 1.  Additional infra like messsage bus is needed.
 2.  Complexity in handling aspects like node discovery,hash range distribution, failure handling.
+3.  Not Auto Scalable :( which is a big downside. It is required to  precalculate maximum load and decide the number of instances.
+
 {% endhighlight %}
 
 
-We analyzed the pros and cons of Active/Passive and Active/Active approach of solving the gluing of content metadata.The Active/Passive does solve the problem in a simple way but it clearly doesn't scale with load.If there is a need to support multitenant where the data load will be higher active/active approach is the way. But it comes with its own baggage. The decision clearly depends on the requirement.
+We analyzed the pros and cons of Active/Passive and Active/Active approach of solving the gluing of content metadata.The Active/Passive does solve the problem in a simple way but it clearly doesn't handle large data load.If there is a need to support multitenancy where the data load will be higher active/active approach is the way. But it comes with its own baggage. The decision clearly depends on the requirement.
