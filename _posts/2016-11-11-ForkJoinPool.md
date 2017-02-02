@@ -1,7 +1,7 @@
 ---
 layout: post
 title: ForkJoinThreds,ForkJoinTasks,ForkJoinPool
-description: Understanding the essesnce of forkjoin worksteal approach helps in better designing while solving the problems.
+description: Understanding the essence of forkjoin worksteal approach helps in better designing while solving the problems.
 ---
 
 >History

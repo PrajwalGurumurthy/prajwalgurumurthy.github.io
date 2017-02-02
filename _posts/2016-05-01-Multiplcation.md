@@ -64,7 +64,7 @@ Lets take a very simple example of multiplication.
 
 > read as “The effect of input ‘a’ on function ‘*‘ ”
 
-![Image1]({{ site.url }}/assets/2m1.png)
+![Image1]({{ site.url }}/assets/ml1/2m1.png)
 
 The green box indicates the derivative aka the effect of input ‘a’ on *.
 
@@ -74,7 +74,7 @@ For example if you increase the value of a to 6 from 5, the output is increased 
 Another example,
 Lets take another example of subtraction. 
 
-![Image2]({{ site.url }}/assets/2m2.png)
+![Image2]({{ site.url }}/assets/ml1/2m2.png)
 
 Lets analyze the effect of input ‘b’ on function ‘-’ . The negative gradient indicates the negative influence , meaning increasing the input b will reduce the output.
 For example if you increase the input b by 1 unit say b = 4 , the output is reduced by 1 unit i.e . output = 1.
@@ -85,14 +85,14 @@ For example if you increase the input b by 1 unit say b = 4 , the output is redu
 Lets get back to the man vs the machines battle. Does the following computation graph aka function chain aka multiplication followed by subtraction ;)  ring any bells?
 
 
-![Image3]({{ site.url }}/assets/2m3.png)
+![Image3]({{ site.url }}/assets/ml1/2m3.png)
 
 Nothing fancy. The same old story of “The effect of input on output”. Notice the red colored boxes (= -3). In plain English “The effect of input ‘a’ on function ‘–‘ (minus) ”.
  For example: = -5
 
 If you increase the input b by 1 unit the output will decrease by 5 units(negative influence).
 
-![Image4]({{ site.url }}/assets/2m4.png)
+![Image4]({{ site.url }}/assets/ml1/2m4.png)
 
 >The red colored minus function is our loss function which determines how well we chose the value for b.
 Given: a=5   b=?   res=20 
@@ -137,7 +137,7 @@ loss=4.50
 
 {% endhighlight %}
 
-![Image5]({{ site.url }}/assets/2m5.png)
+![Image5]({{ site.url }}/assets/ml1/2m5.png)
 
 Notice the loss function value which is getting reduced every iteration. After a few number of iteration We arrive at the optimal solution.
 
