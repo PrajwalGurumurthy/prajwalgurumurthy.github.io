@@ -63,6 +63,9 @@ Lets have a look at the computation graph we had.
 
 ![Image1]({{ site.url }}/assets/ml2/2m5.png)
 
+
+>Dissecting the code
+
 We have the inputs and the inputs go through a series of operations and finally we have the cost.
 
 Accordingly we represent the inputs a,b,result and operations multiplication and cost in tensorflow as below.
@@ -96,6 +99,7 @@ We defined the inputs,operations and Optimisers in a way that is as close as it 
 An other interesting aspect of Tensorflow is the visualisation of the Computation Graph using the TensorBoard.
 To track the valus of the Variable 'b' during multiple steps of training.
 
+>Summary of the Variables
 
 {% highlight text %}
 summary_b = tf.summary.scalar('Finding_Input2', b)
@@ -105,16 +109,21 @@ summary_writer.add_summary(summary_strb, step)
 
 Later these values are used for building a nice graphs as shown below.
  
+The below graph shows how the computer found the second input b. 
 ![Image2]({{ site.url }}/assets/ml2/input_b.png)
 
+The below graph shows the minimisation of cost
 ![Image2]({{ site.url }}/assets/ml2/cost.png)
 
+>Computation Graph as seen by TensorFlow
 
 There is a very nice way to visualise the computation graph.<br> 
 summary_writer = tf.summary.FileWriter('log_multiplication_graph', sess.graph)<br>
 
 ![Image1]({{ site.url }}/assets/ml2/cg.png)
 
-Definitely my computation graph looked a lot better.
+Definitely my computation graph looked a lot better.Still need to figure out whats being projected as computation graph.
+
+
 
 
