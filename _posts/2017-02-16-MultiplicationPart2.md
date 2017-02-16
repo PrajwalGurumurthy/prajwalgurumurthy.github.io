@@ -55,22 +55,66 @@ with tf.Session() as sess:
         summary_writer.add_summary(summary_strcost, step)        
         sess.run(train)
     print('Before Learning:: a={} b={} currentRes={} expectedRes={}'.format(sess.run(a),sess.run(b),sess.run(tf.mul(a,b)),sess.run(res)))
+    summary_writer = tf.summary.FileWriter('log_multiplication_graph', sess.graph)
 
 {% endhighlight %}
 
 Lets have a look at the computation graph we had.
 
-![Image5]({{ site.url }}/assets/ml1/2m5.png)
+![Image1]({{ site.url }}/assets/ml2/2m5.png)
 
-We have the inputs and the inputs go through a series of operation and finally we have the result.
+We have the inputs and the inputs go through a series of operations and finally we have the cost.
 
-Accordingly we represent the inputs in tensorflow
+Accordingly we represent the inputs a,b,result and operations multiplication and cost in tensorflow as below.
 
 {% highlight text %}
-a = tf.constant(5.0,name = "a");
-b = tf.Variable(50.0,name = "b");
+a = tf.constant(5.0,name = "a"); # doesn't change. Hence a constant
+b = tf.Variable(50.0,name = "b"); # To be Found . Hence a Variable
+res = tf.constant(15.0,name="result")
+mul = tf.mul(a,b) # Multiplication operation
+cost = tf.square(res-mul) # # Cost operation
 {% endhighlight %}
 
 
+Lets define the Gradient descend optimisers to minimise the cost.
+
+{% highlight text %}
+opt = tf.train.GradientDescentOptimizer(0.001); # 0.001 is the learning rate
+train = opt.minimize(cost);
+{% endhighlight %}
+
+Then we train the model using 
+
+{% highlight text %}
+for step in range(1000):
+	sess.run(train)
+{% endhighlight %}
+
+What is important to note here is the way we coded using Tensorflow. 
+We defined the inputs,operations and Optimisers in a way that is as close as it can to define the computation graph.
+<br>
+An other interesting aspect of Tensorflow is the visualisation of the Computation Graph using the TensorBoard.
+To track the valus of the Variable 'b' during multiple steps of training.
+
+
+{% highlight text %}
+summary_b = tf.summary.scalar('Finding_Input2', b)
+summary_strb = sess.run(summary_b)
+summary_writer.add_summary(summary_strb, step)
+{% endhighlight %}
+
+Later these values are used for building a nice graphs as shown below.
+ 
+![Image2]({{ site.url }}/assets/ml2/input_b.png)
+
+![Image2]({{ site.url }}/assets/ml2/cost.png)
+
+
+There is a very nice way to visualise the computation graph.<br> 
+summary_writer = tf.summary.FileWriter('log_multiplication_graph', sess.graph)<br>
+
+![Image1]({{ site.url }}/assets/ml2/cg.png)
+
+Definitely my computation graph looked a lot better.
 
 
