@@ -16,30 +16,30 @@ Refer the following blogs on RNNs to get an in depth and simple understanding of
 [The Unreasonable Effectiveness of Recurrent Neural Networks by Andrej Karpathy](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)<br>
 [Understanding LSTM Networks](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
 
-<p><i>Note: This remainder section assumes that you have a basic understanding of RNNs</i></p>
+<p><i>Note: The remainder section assumes that you have a basic understanding of RNNs</i></p>
+
+>Its OK if you are in the Stage2.
 
 You flow through different stages of emotions while working with RNNs.
 
 {% highlight code %}
-Stage1: WOW!!
-Stage2: WTF!!
-Stage3:	Aha!!
+Stage1: WOW!! RNNs are so cool...
+Stage2: WTF!! How does this work?
+Stage3:	Aha!! Damn!! I knew it..
 {% endhighlight %}
-
->Its OK if you are in the Stage2.
 
 I personally spent a lot of time in Stage2 trying to get the intuition of WTF is happing inside the network that it is able to understand
 sequences in data. But once you get that aha!! moment you will realise how simple RNNs are. In fact the simple RNNs(Vanilla RNNs) are very similar
 to the vanilla neural networks except that the hidden states are computed in a different way. The hidden state function is what gives the RNN
 the ability to store previous states information and use it along with the current state to predict output.
 
->Questions that haunted me
+<b><i>Questions that haunted me:</i></b>
 
 {% highlight text %}
-How does the gradients flow backwards through time?<br>
-How are the weights updated backwards through time?<br>
-What information should be maintained while forward propagating through time?
-What information should be maintained while backward propagating backwards through time?
+How does the gradients flow backwards through time?
+How are the weights updated backwards through time?
+What information should be maintained while propagating forward through time?
+What information should be maintained while propagating backwards through time?
 {% endhighlight %}
 
 <p><b>I found answers to all the questions once I started writing computations graph through time during forward propagation and then
@@ -50,10 +50,10 @@ did a backward propagation backwards through time. That is when you realise how 
 
 Before we dissect the RNN lets start by dissecting the vanilla NN so that its much easier to understand the difference between them.
 
-<br>For the sake of example lets consider 3:1:1 neural structure with i/p,hidden and o/p respectively.
+For the sake of example lets consider 3:1:1 neural structure with i/p,hidden and o/p respectively.
 We will use RELU as activation functions in hidden units,sigmoid in the output layer and log loss function.
 
->Lets get the color coding of the graph right
+<i>Lets get the color coding of the graph right</i>
 
 
 
