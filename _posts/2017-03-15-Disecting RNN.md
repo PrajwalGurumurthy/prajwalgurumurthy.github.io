@@ -42,21 +42,67 @@ What information should be maintained while propagating forward through time?
 What information should be maintained while propagating backwards through time?
 {% endhighlight %}
 
-<p><b>I found answers to all the questions once I started writing computations graph through time during forward propagation and then
-did a backward propagation backwards through time. That is when you realise how RNNs are a bit different from normal Vanilla NN.</b></p>
+<p><b>I found answers to all these questions once I started writing computations graph through time during forward propagation and then
+did a backward propagation backwards through time.</b></p>
 
 
 >Dissecting the Recurrent Neural Network
 
-Before we dissect the RNN lets start by dissecting the vanilla NN so that its much easier to understand the difference between them.
-
 For the sake of example lets consider 3:1:1 neural structure with i/p,hidden and o/p respectively.
 We will use sigmoid as activation functions in hidden units and output layer.
+Lets set the sequence length to 2.
+
+During forward propagation we iterate through the input for the sequence length(2 in this case).
+
+Forward Propagation in RNN at time t1 is as illustrated below.
+
+{% highlight text %}
+h1t1 = sig((Wxh . X11) + (Whh . h1t0))
+y' = sig (Why . h1t1)
+{% endhighlight %}
+
+<i>Note h1t1 denotes the hiddenstate h1 @ time t1.<br>X11 denotes the 1st input of 1st sequence</i><br>
+<i>Note h1t2 denotes the hiddenstate h1 @ time t2.<br>X12 denotes the 2nt input of 1st sequence</i><br>
+<b>It is important to notice that the hidden state is a function of input as well as the previous state.
+<br>h1t1 = sig((Wxh . X11) + (Whh . h1t0)).</b>
 
 ![Image1]({{ site.url }}/assets/rnn/0.png)
+
+Similarly Forward Propagation in RNN at time t2 is as illustrated below.
+<b>One important thing to notice here is that same weights are used during all the time sequence.</b>
+
+{% highlight text %}
+h1t2 = sig((Wxh . X12) + (Whh . h1t1))
+y' = sig (Why . h1t2)
+{% endhighlight %}
+
 ![Image1]({{ site.url }}/assets/rnn/1.png)
-![Image1]({{ site.url }}/assets/rnn/2.png)
+
+
+<b>Now lets look at the backward propagation. As I said we do backprop backwards through time form t2->t1 as shown below.</b>
+BackProp is very similar to the vanilla neural nets.Not much of a difference.
+
 ![Image1]({{ site.url }}/assets/rnn/3.png)
+![Image1]({{ site.url }}/assets/rnn/2.png)
+
+
+<b> The most important and subtle thing to notice here is the way back prop is done across different time sequence.
+Since the hidden state is a function of its previous state, while back propagation, we need to take into account
+the gradient flowing backwards through time as shown below. Every time step we update the weights and also save the gradient of the 
+hidden state at that time step(say t2) and propagate the gradients to previous time step(t1).</b>
+
 ![Image1]({{ site.url }}/assets/rnn/4.png)
+
+>Vanilla Neural Network vs Recurrent Neural Network
+
+The main difference between the VNN and RNN is the way the hidden state is computed. The above RNN can be converted to VNN by removing the sequence
+and cropping some part of the RNN as shown below.
+
 ![Image1]({{ site.url }}/assets/rnn/5.png)
+
+Sorry about the handwritten diagrams.I hope you get some intuition as to how weights in RNN are getting tuned backwards through time to understand sequence in data.
+I insist working out the derivatives of the above network to better undertand the flow of gradients through time.Also you might have noticed
+we need to keep quite a lot of information in memory during forward and backward propagation in RNN based on the sequence length.
+
+
 
