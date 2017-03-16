@@ -43,22 +43,20 @@ What information should be maintained while propagating backwards through time?
 {% endhighlight %}
 
 <p><b>I found answers to all the questions once I started writing computations graph through time during forward propagation and then
-did a backward propagation backwards through time. That is when you realise how RNNs are a bit different from normal Vanilla NN</b></p>
+did a backward propagation backwards through time. That is when you realise how RNNs are a bit different from normal Vanilla NN.</b></p>
 
 
->Dissection
+>Dissecting the Recurrent Neural Network
 
 Before we dissect the RNN lets start by dissecting the vanilla NN so that its much easier to understand the difference between them.
 
 For the sake of example lets consider 3:1:1 neural structure with i/p,hidden and o/p respectively.
-We will use RELU as activation functions in hidden units,sigmoid in the output layer and log loss function.
+We will use sigmoid as activation functions in hidden units and output layer.
 
-<i>Lets get the color coding of the graph right</i>
-
-
-
-<b>Dissecting the Vanilla Neural Network</b>
-
-
-
+![Image1]({{ site.url }}/assets/rnn/0)
+![Image1]({{ site.url }}/assets/rnn/1)
+![Image1]({{ site.url }}/assets/rnn/2)
+![Image1]({{ site.url }}/assets/rnn/3)
+![Image1]({{ site.url }}/assets/rnn/4)
+![Image1]({{ site.url }}/assets/rnn/5)
 
