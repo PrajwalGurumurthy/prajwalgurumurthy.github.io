@@ -53,10 +53,10 @@ Before we dissect the RNN lets start by dissecting the vanilla NN so that its mu
 For the sake of example lets consider 3:1:1 neural structure with i/p,hidden and o/p respectively.
 We will use sigmoid as activation functions in hidden units and output layer.
 
-![Image1]({{ site.url }}/assets/rnn/0)
-![Image1]({{ site.url }}/assets/rnn/1)
-![Image1]({{ site.url }}/assets/rnn/2)
-![Image1]({{ site.url }}/assets/rnn/3)
-![Image1]({{ site.url }}/assets/rnn/4)
-![Image1]({{ site.url }}/assets/rnn/5)
+![Image1]({{ site.url }}/assets/rnn/0.png)
+![Image1]({{ site.url }}/assets/rnn/1.png)
+![Image1]({{ site.url }}/assets/rnn/2.png)
+![Image1]({{ site.url }}/assets/rnn/3.png)
+![Image1]({{ site.url }}/assets/rnn/4.png)
+![Image1]({{ site.url }}/assets/rnn/5.png)
 
