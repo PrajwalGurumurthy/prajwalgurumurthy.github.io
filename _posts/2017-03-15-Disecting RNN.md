@@ -13,7 +13,7 @@ RNNs are built to solve this exact problem. RNNs have the ability to understand 
 
 Refer the following blogs on RNNs to get an in depth and simple understanding of RNNs.
 
-[The Unreasonable Effectiveness of Recurrent Neural Networks by Andrej Karpathy](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)
+[The Unreasonable Effectiveness of Recurrent Neural Networks by Andrej Karpathy](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)<br>
 [Understanding LSTM Networks](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
 
 <p><i>Note: This remainder section assumes that you have a basic understanding of RNNs</i></p>
@@ -34,11 +34,16 @@ to the vanilla neural networks except that the hidden states are computed in a d
 the ability to store previous states information and use it along with the current state to predict output.
 
 >Questions that haunted me
+
+{% highlight text %}
 How does the gradients flow backwards through time?<br>
 How are the weights updated backwards through time?<br>
+What information should be maintained while forward propagating through time?
+What information should be maintained while backward propagating backwards through time?
+{% endhighlight %}
 
 <p><b>I found answers to all the questions once I started writing computations graph through time during forward propagation and then
-did a backward propagation through time backwards. That is when you realise how RNNs are a bit different from normal Vanilla NN</b></p>
+did a backward propagation backwards through time. That is when you realise how RNNs are a bit different from normal Vanilla NN</b></p>
 
 
 >Dissection
