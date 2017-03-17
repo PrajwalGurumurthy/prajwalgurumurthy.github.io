@@ -61,15 +61,16 @@ h1t1 = sig((Wxh . X11) + (Whh . h1t0))
 y' = sig (Why . h1t1)
 {% endhighlight %}
 
-<i>Note h1t1 denotes the hiddenstate h1 @ time t1.<br>X11 denotes the 1st input of 1st sequence</i><br>
-<i>Note h1t2 denotes the hiddenstate h1 @ time t2.<br>X12 denotes the 2nt input of 1st sequence</i><br>
-<b>It is important to notice that the hidden state is a function of input as well as the previous state.
+<i>Note: h1t1 denotes the hiddenstate h1 @ time t1.X11 denotes the 1st input of 1st sequence</i><br>
+
+<b>It is important to notice that the hidden state is a function of input as well as the previous state.h1t0 can be chosen as '0' to start with.
 <br>h1t1 = sig((Wxh . X11) + (Whh . h1t0)).</b>
 
 ![Image1]({{ site.url }}/assets/rnn/0.png)
 
 Similarly Forward Propagation in RNN at time t2 is as illustrated below.
-<b>One important thing to notice here is that same weights are used during all the time sequence.</b>
+<b>One important thing to notice here is that same weights are used during all the time sequence but with different input from the sequence.</b> In this case X12.
+<br><i>Note: h1t2 denotes the hiddenstate h1 @ time t2.X12 denotes the 2nt input of 1st sequence</i><br>
 
 {% highlight text %}
 h1t2 = sig((Wxh . X12) + (Whh . h1t1))
