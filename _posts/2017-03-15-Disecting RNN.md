@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Dissecting the RNN[Recurrent Neural Network]
+title: Recurrent Neural Network in simple words
 description: The RNNs are magical in a way they work. This post dissects the internal structure of the neural computation graph of RNNs and tries to give an intuition of how neurons tune themselves to understand sequences in data.
 ---
 

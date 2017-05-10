@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Self Learning Machines for the Multiplication of 2 numbers [Part 1]
+title: Simple machine learning example
 description: Not all problems can be solved by programming a computer.Some problems require a computer to learn to solve by itself.
 ---
 
