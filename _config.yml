@@ -31,3 +31,4 @@ gems:
   - jekyll-paginate
   - jekyll-gist
   - jekyll-sitemap
+  - jekyll-seo-tag
