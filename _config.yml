@@ -4,9 +4,9 @@ permalink:           pretty
 # Setup
 title:               PrajwalGurumurthy
 tagline:             ""
-url:                 ""
+url:                 http://prajwalgurumurthy.github.io
 paginate:            1
-baseurl:             http://prajwalgurumurthy.github.io
+baseurl:             ""
 
 # Assets
 #
