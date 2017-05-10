@@ -4,10 +4,10 @@ permalink:           pretty
 # Setup
 title:               PrajwalGurumurthy
 description:         This blog concentrates on the latest trends in topics ranging from programming, compute, algorithms, security,machine learning, CICD, hardware,distributed systems to almost anything related to the computing world.
-tagline:             "If we cannot explain things in simple words, we don’t know it well enough."
+tagline:             If we cannot explain things in simple words, we don’t know it well enough.
 url:                 http://prajwalgurumurthy.github.io
 paginate:            1
-baseurl:             "http://prajwalgurumurthy.github.io"
+baseurl:             http://prajwalgurumurthy.github.io
 
 # Assets
 #
