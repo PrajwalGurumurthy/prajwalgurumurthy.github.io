@@ -11,7 +11,7 @@ where it is necessary to keep track of past information. For instance Image capt
 Video processing and other similar use cases. Regular neural networks lack the ability to capture past/sequence information from data. 
 RNNs are built to solve this exact problem. RNNs have the ability to understand sequences in data and predict based on current input plus the previous state.
 
-Refer the following blogs on RNNs to get an in depth and simple understanding of RNNs.
+Refer the following blogs on RNNs to get an in depth understanding of RNNs in simple words.
 
 [The Unreasonable Effectiveness of Recurrent Neural Networks by Andrej Karpathy](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)<br>
 [Understanding LSTM Networks](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
