@@ -4,8 +4,6 @@ title: Paxos: Part 1
 description: This post highlights the challenges in achieving consensus in a distributed environment. This post also covers safety and liveliness properties w.r.t distributed consensus.
 ---
 
->
-
   Why Paxos?
     distributed consensus
     Replicated Log state machine
@@ -37,4 +35,3 @@ Paxos:
   propose-accept
 
   Safe but not Lively?
-  
