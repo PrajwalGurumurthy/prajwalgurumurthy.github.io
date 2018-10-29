@@ -10,5 +10,3 @@ I am a Product Owner/Technical Lead at Cisco currently working on building solut
 
 >” If we cannot explain things in simple words, we don’t know it well enough.”
 
-Please find my resume [here]({{ site.url }}/assets/resume/PrajwalGurumurthy.pdf)
-
