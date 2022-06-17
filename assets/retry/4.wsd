@@ -1,0 +1,53 @@
+@startuml
+
+
+title  __ Recovery Mechanism for non Retriable Non Transient Failure __\n\n
+
+participant "Order Fulfilment Events" as ofskafka
+participant "customer Order" as cos
+participant "Product " as product
+participant "Pricing" as quote
+participant "Payment" as payment
+participant "customer Order Events" as coskafka
+participant "customer Order DLQ" as dlq
+
+
+       group
+         else Option 1 : Auto correct and recover
+             ofskafka -> cos  : pick complete for the order
+             cos -> product : validate picked product data
+
+             group
+             else product data NOT available
+              product -> cos : product data NOT available
+              cos --> cos : Auto correct based on business agreement
+
+              note over cos
+                the picker actually has the product in hand and
+                has sent the picked barcode (most cases price embedded barcode)
+              end note
+
+             end
+
+             cos -> quote: re price and generate invoice for the order [Some items are unavailable/substituted]
+             quote --> cos : new invoice for the order
+             cos -> payment : take payment
+
+
+           cos -> ofskafka : ack message
+      end
+
+      group
+        else Option 2 : Reject and Alert
+            ofskafka -> cos  : pick complete for the order
+            cos -> product : validate picked product data
+            product --> cos : product data NOT available
+            cos --> dlq : publish and alert about the invalid data
+            cos -> coskafka : Update Invalid ORDER State
+
+          cos -> ofskafka : ack message
+     end
+
+
+
+@enduml

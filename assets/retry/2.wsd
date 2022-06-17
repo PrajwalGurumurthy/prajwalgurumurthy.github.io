@@ -1,0 +1,71 @@
+@startuml
+
+
+title  __ Recovery Mechanism for Retriable Failures via Retry Queue __\n\n
+
+participant "Order Fulfilment Events" as ofskafka
+participant "customer Order" as cos
+participant "Pricing" as quote
+participant "Payment" as payment
+participant "customer Order Events" as coskafka
+participant "customer Order Retry Queue" as cosretryq
+participant "customer Order Retrier" as cosretrier
+participant "customer Order DLQ" as cosdlq
+
+
+
+
+       group
+         else Take Payment post picking
+             ofskafka -> cos  : pick complete for the order
+             cos -> cos : validate pick data
+             cos -> quote: re price and generate invoice for the order [Some items are unavailable/substituted]
+             quote --> cos : new invoice for the order
+             cos -> payment : take payment
+
+             group
+              else Success
+              payment --> cos : SUCCESS
+              cos -> coskafka : Order PAYMENT SUCCESS
+            end
+
+            group
+             else Retriable Payment FAILURE
+             payment --> cos : FAILURE
+             cos -> cosretryq : publish Payment retry event with retry threshold and delay
+           end
+           note over cosretryq
+             Combination of retry_threshold !=0 && delay
+             allows us to control the recovery window of retry
+           end note
+
+           cos -> ofskafka : ack message
+      end
+|||
+|||
+|||
+
+      group
+        else Retry from Retry queue
+          cosretryq -> cosretrier : poll retry Events
+          cosretryq --> cosretrier : payment failure event
+          cosretrier -> payment : retry PAYMENT
+
+          group
+           else Payment Success
+            payment --> cos : SUCCESS
+            cosretrier -> coskafka : Order PAYMENT SUCCESS
+         end
+
+         group
+          else Retriable Payment FAILURE && retry_threshold !=0 && delay > current-time
+
+            payment --> cosretrier : FAILURE
+            cosretrier -> cosretryq : publish Payment retry event with updated retry threshold
+          else Payment FAILURE && retry_threshold ==0
+            cosretrier -> cosdlq : publish Payment Failed Event to DLQ
+        end
+      end
+
+
+@enduml

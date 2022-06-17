@@ -1,0 +1,64 @@
+@startuml
+
+
+title  __ Event processing in E-Commerce __\n\n
+
+participant "Website Apps" as apps
+participant "Customer Order" as cos
+participant "Payment" as payment
+participant "Customer Order Events" as coskafka
+participant "Pricing" as quote
+participant "Order Fulfilment" as ofs
+participant "Order Fulfilment Events" as ofskafka
+participant "Picking[Robotic/Manual]" as fps
+participant "Transport" as transport
+
+apps -> cos : products added to order
+          group
+            else During Order Checkout
+                cos -> payment : Authenticate and Authorise payment
+                payment --> cos : success
+                cos -> coskafka : publish order checkout event
+                cos -> apps : Order checkout SUCCESS
+         end
+
+         group
+           else Post Order Checkout
+               coskafka -> ofs  : poll order checkout events
+               ofs -> ofs : create fulfilment orders for picking from a particular store
+               ofs -> ofskafka : publish pick request
+               ofs -> fps : pick from given store
+        end
+
+
+        group
+          else Picking
+              fps -> fps  : pick products
+              fps --> ofs : pick updates
+              ofs -> ofskafka : pick complete for the given Fulfilment order
+       end
+
+       group
+         else Take Payment post picking
+             ofskafka -> cos  : pick complete for the order
+             cos -> quote: re price and generate invoice for the order [Some items are unavailable/substituted]
+             quote --> cos : new invoice for the order
+             cos -> payment : take payment
+             payment --> cos : SUCCESS
+
+             note over payment
+               If Order payment Fails
+               Orders are not dispatched
+             end note
+
+             cos -> coskafka : Order PAYMENT SUCCESS
+      end
+
+      group
+        else Post PAYMENT- Dispatch Order
+            ofs -> coskafka  : Get Order Payment Event
+            ofs -> ofskafka : CLeared for Fulfilment
+            ofskafka --> transport : Dispatch Order
+     end
+
+@enduml

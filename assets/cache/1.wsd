@@ -1,0 +1,65 @@
+@startuml
+
+
+title  __ Cache Replication __\n\n
+
+participant "Cache Writer" as writer
+participant "Cache Reader" as reader
+participant "Local Cache Cluster" as local
+participant "Cache Dumper" as coldbooter
+participant "Cache Update Events" as cacheEvents
+participant "Cache Update Relay" as relay
+participant "Cache Change Hook Relay" as dcprelay
+participant "Http/grpc-Cache-Update-Service" as hcp
+participant "Remote Cache Cluster" as remote
+
+
+
+       group
+         else Option 1 : Cold Boot Cache
+        coldbooter -> local : Dump current cache contents
+        local -> coldbooter : dump file
+        coldbooter -> blobstorage : upload <cachedump>
+        coldbooter -> hcp : coldboot <cachedump>
+        hcp --> blobstorage : read <cachedump>
+        hcp --> remote : import <cachedump>
+
+      end
+
+|||
+|||
+|||
+      group
+        else Option 2 : Cache Update Events
+          writer -> local : update cache with key k1, value v1
+          writer -> cacheEvents : publish CacheUpdateEvent with Cache key k1, Value v1
+          cacheEvents --> relay : Poll cache change Events
+          relay -> hcp : notify change (k1,v1)
+            note over hcp
+              using persistent https/grpc connections to avoid
+              inter region connectivity using vpc-peering/VPNs
+              along with batching to for effective use of tcp/ip
+              for efficient network and throughput
+            end note
+          hcp -> remote : update cache
+      end
+
+|||
+|||
+|||
+      group
+        else Option 3 : Cache data change Hooks
+          dcprelay -> local : subscribe to cache change notification
+          writer -> local : update cache with key k1, value v1
+          local --> dcprelay : cache change notification
+          dcprelay -> hcp : notify change (k1,v1)
+            note over hcp
+              cache change notification is fire and forget, if replicator
+              Pub/Sub client disconnects, and reconnects later,
+              all the events delivered during the time the client was disconnected are lost.
+            end note
+          hcp -> remote : update cache
+      end
+
+
+@enduml

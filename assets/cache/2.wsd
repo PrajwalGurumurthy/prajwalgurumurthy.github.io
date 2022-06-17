@@ -1,0 +1,49 @@
+@startuml
+
+
+title  __ Multi Cluster replication __\n\n
+
+participant "Cache Writer" as writer
+participant "Cache Reader" as reader
+participant "Local Cache Cluster" as local
+participant "Cache Clusters Manager" as cmanager
+
+
+participant "Cache Update Relay" as relay
+
+participant "Http/grpc-Cache-Update-Service 1" as hcp1
+participant "Remote Cache Cluster 1" as remote1
+
+participant "Http/grpc-Cache-Update-Service 2" as hcp2
+participant "Remote Cache Cluster 2" as remote2
+
+
+      group
+        else Startup of service
+          hcp1 -> cmanager : register the remote cluster 1 with zone id 1
+          hcp2 -> cmanager : register the remote cluster 2 with zone id 1
+          relay -> cmanager : discover zone 1 remote clusters periodically
+          cmanager --> relay : hcp1/hcp2
+      end
+
+      group
+        else Monitor Health and Update the remote Clusters
+        cmanager -> cmanager : check health of all remote Clusters
+        cmanager -> hcp1 : check health/stats like hit ratio
+        cmanager -> hcp2 : check health/stats like hit ratio
+        cmanager -> cmanager : update the list of remote clusters based on threshold
+        cmanager -> hcp1 : instruct remote cluster to cold boot if the hit ratio is low
+      end
+
+      group
+        else Real time replicate to Multi Clusters
+          relay -> local : subscribe to cache change notification
+          writer -> local : update cache with key k1, value v1
+          local --> relay : cache change notification
+          relay -> hcp1 : notify change (k1,v1)
+          hcp1 -> remote1 : update cache
+          relay -> hcp2 : notify change (k1,v1)
+          hcp2 -> remote2 : update cache
+      end
+
+@enduml

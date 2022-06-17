@@ -1,0 +1,72 @@
+@startuml
+
+
+title  __ Recovery Mechanism for non Retriable Transient Failure __\n\n
+
+participant "Order Fulfilment Events" as ofskafka
+participant "customer Order" as cos
+participant "Pricing" as quote
+participant "Payment" as payment
+participant "customer Order Events" as coskafka
+participant "Order Fuliflment service" as ofs
+participant "Transport" as transport
+participant "Customer Engagement Centre" as cec
+
+
+
+
+
+       group
+         else Take Payment post picking
+             ofskafka -> cos  : pick complete for the order
+             cos -> cos : validate pick data
+             cos -> quote: re price and generate invoice for the order [Some items are unavailable/substituted]
+             quote --> cos : new invoice for the order
+             cos -> payment : take payment
+
+             group
+              else Success
+              payment --> cos : SUCCESS
+              cos -> coskafka : Order PAYMENT SUCCESS
+            end
+
+            group
+             else Non Retriable Transient Payment FAILURE
+             payment --> cos : FAILURE due to paymentId being invalid
+             cos -> coskafka : Order PAYMENT FAILURE event
+           end
+
+           note over coskafka
+             Here Order Payment Failed event is
+             carrying the failure notification.
+             [Error channel]
+           end note
+
+           group
+           else Operation Action for failed payment
+              coskafka --> ofs : Order payment failed
+              ofs --> transport : stop Dispatch of that order
+            end
+
+          group
+          else Support Action for failed payment
+            coskafka --> cec : Order payment failed
+            cec --> Customer : Call and update alternative Payment details
+            cec -> cos : retry payment via API
+
+            note over cos
+              If retry payment succeeds,
+              order is diaptched, if not
+              the order is cancelled by CEC
+            end note
+
+          end
+
+
+
+           cos -> ofskafka : ack message
+      end
+
+
+
+@enduml
