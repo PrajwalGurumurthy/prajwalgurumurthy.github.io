@@ -30,7 +30,7 @@ Maintaining global consistency of cache data is hard. it doesn’t come for free
 ## Discovering and Monitoring Multiple Remote region Clusters
 Imagine there are 100s of cache clusters, discovering and updating all clusters is a challenge in itself. It is a challenge to discover and monitor all the clusters across the regions and check if the hit ratio is upto the mark.
 
-![Image1]({{ site.url }}/assets/retry/1.png)
+![Image1]({{ site.url }}/assets/cache/1.png)
 
 ### Overview of the services mentioned above.
 
@@ -47,7 +47,7 @@ Cache Dumper: This service takes the dump of the cache cluster. There are multip
 Please note that I would not be able to list all the possible options and designs addressing the above challenges. This is to give you a glance of the items we need to keep in mind while designing multi cluster cache replication strategies. Below are few approaches that we had followed to address multi cluster cache set up across regions.
 
 
-![Image1]({{ site.url }}/assets/retry/1.png)
+![Image1]({{ site.url }}/assets/cache/1.png)
 
 
 ## Cold boot or Bootstrapping the new cluster
