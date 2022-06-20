@@ -2,7 +2,7 @@
 layout: post
 title: Multi Region/Multi cluster Cache replication
 description: All enterprise platforms use cache in one or the other form to improve the SLAs. Starting from a cold cache  vs a hot cache can have a significant impact on the the user experience and the API response times. This post tries to highlight some of the key challenges in building a multi region or multi cluster cache replication strategies. We will use Redis cache as a reference to discuss the design options.
-
+ 
 ---
 ## Why replicate across multiple regions/clusters?
 The hidden requirement in this design is that the data needed to serve a request is readily available anywhere for different use cases. The cache hit rate can influence the impact on the SLAs of the services. Also the load on data stores and query layers can have a huge impact depending on the availability and the consistency of data in the cache.

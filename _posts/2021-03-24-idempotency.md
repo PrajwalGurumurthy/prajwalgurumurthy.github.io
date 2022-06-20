@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Distributed Domain Transactions in API services and Event consumers
-description: Most enterprise services will have this common problem of interacting with multiple services to
+description: Most enterprise services will have this common problem of interacting with multiple services to achieve a business outcome. The common promlem that tags along side SOA/Microservice architecture id distributed transaction management. IN this post we will try understand the problem, formalise it and then come up with approaches to solve the same.
 
 ---
 
