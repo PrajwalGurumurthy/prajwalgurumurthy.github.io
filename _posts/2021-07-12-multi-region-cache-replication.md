@@ -34,15 +34,17 @@ Imagine there are 100s of cache clusters, discovering and updating all clusters 
 
 ### Overview of the services mentioned above.
 
-Cache Dumper: This service takes the dump of the cache cluster. There are multiple options to implement this.
-* a separate service that takes the dup of the whole cluster
-* agents running alongside each node in the cluster can take the dump of each node in the cluster
+* Cache Dumper: This service takes the dump of the cache cluster. [sidecar/separate service to take the dump of whole cluster]
 
-Cache Replicator: This service is responsible for replicating the cache data based on Cache Update Events
-Cache Update Relay : This service subscribes on to cache data update hooks and replicates the same in remote cluster
-Cache Cluster Manager : This service manages all the clusters. Checks the health and monitors. Enables the discoverability of the clusters for cache relays.
-Http/grpc Cache Update service : This service exposes http/grpc endpoints for updating the cache.
-Blob storage : This is to store the cache dump so that it can be accessed for cold booting new clusters.
+* Cache Replicator: This service is responsible for replicating the cache data based on Cache Update Events
+
+* Cache Update Relay : This service subscribes on to cache data update hooks and replicates the same in remote cluster
+
+* Cache Cluster Manager : This service manages all the clusters. Checks the health and monitors. Enables the discoverability of the clusters for cache relays.
+
+* Http/grpc Cache Update service : This service exposes http/grpc endpoints for updating the cache.
+
+* Blob storage : This is to store the cache dump so that it can be accessed for cold booting new clusters.
 
 Please note that I would not be able to list all the possible options and designs addressing the above challenges. This is to give you a glance of the items we need to keep in mind while designing multi cluster cache replication strategies. Below are few approaches that we had followed to address multi cluster cache set up across regions.
 
