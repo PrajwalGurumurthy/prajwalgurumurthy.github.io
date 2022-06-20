@@ -2,7 +2,7 @@
 layout: post
 title: Multi Region/Multi cluster Cache replication
 description: All enterprise platforms use cache in one or the other form to improve the SLAs. Starting from a cold cache  vs a hot cache can have a significant impact on the the user experience and the API response times. This post tries to highlight some of the key challenges in building a multi region or multi cluster cache replication strategies. We will use Redis cache as a reference to discuss the design options.
- 
+
 ---
 ## Why replicate across multiple regions/clusters?
 The hidden requirement in this design is that the data needed to serve a request is readily available anywhere for different use cases. The cache hit rate can influence the impact on the SLAs of the services. Also the load on data stores and query layers can have a huge impact depending on the availability and the consistency of data in the cache.
@@ -38,16 +38,16 @@ Cache Dumper: This service takes the dump of the cache cluster. There are multip
 * a separate service that takes the dup of the whole cluster
 * agents running alongside each node in the cluster can take the dump of each node in the cluster
 
-* Cache Replicator: This service is responsible for replicating the cache data based on Cache Update Events
-* Cache Update Relay : This service subscribes on to cache data update hooks and replicates the same in remote cluster
-* Cache Cluster Manager : This service manages all the clusters. Checks the health and monitors. Enables the discoverability of the clusters for cache relays.
-* Http/grpc Cache Update service : This service exposes http/grpc endpoints for updating the cache.
-* Blob storage : This is to store the cache dump so that it can be accessed for cold booting new clusters.
+Cache Replicator: This service is responsible for replicating the cache data based on Cache Update Events
+Cache Update Relay : This service subscribes on to cache data update hooks and replicates the same in remote cluster
+Cache Cluster Manager : This service manages all the clusters. Checks the health and monitors. Enables the discoverability of the clusters for cache relays.
+Http/grpc Cache Update service : This service exposes http/grpc endpoints for updating the cache.
+Blob storage : This is to store the cache dump so that it can be accessed for cold booting new clusters.
 
 Please note that I would not be able to list all the possible options and designs addressing the above challenges. This is to give you a glance of the items we need to keep in mind while designing multi cluster cache replication strategies. Below are few approaches that we had followed to address multi cluster cache set up across regions.
 
 
-![Image1]({{ site.url }}/assets/cache/1.png)
+![Image1]({{ site.url }}/assets/cache/2.png)
 
 
 ## Cold boot or Bootstrapping the new cluster
