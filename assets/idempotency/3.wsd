@@ -1,0 +1,138 @@
+@startuml
+
+
+title  __ Transaction_Mgmt- data/event__\n\n
+
+participant "Event Bus" as eventbus
+boundary "Domain Event Consumer service" as api1
+participant "Idempotent API service" as api2
+participant "Non Idempotent API service" as api3
+participant "Data Store" as db
+participant "Event Store" as kafka
+participant "Fallback Event Store" as fq
+participant "Fallback consumer" as fqcon
+
+
+
+eventbus -> api1 : poll events
+
+activate api1
+
+group
+else Data Store failure
+  api1 -> db : get my resource from db
+  db --> api1 : SUCCESS
+
+  api1 -> api1 : validate the \n state of my resource
+
+      group
+      else Valid State
+        api1 -> api2 : update state
+        api2 -->  api1 : success
+
+        api1 -> api3 : get state
+        api3 --> api1 : success
+
+        api1 -> api1 : validate the state of \n the resource
+
+        api1 -> api3 : if valid update state
+        api3 --> api1 : success
+
+        api1 -> db : update my resource state \n and persist
+        db -> api1 : Failure [timeout/dbwrite failure]
+
+        end
+        api1 --> eventbus : nack/seek offset
+  end
+
+eventbus -> api1 : poll events
+
+  group
+  else Event publish failure
+    api1 -> db : get my resource from db
+    db --> api1 : SUCCESS
+
+    api1 -> api1 : validate the \n state of my resource
+
+    group
+        else Valid State
+          api1 -> api2 : update state
+          api2 -->  api1 : success
+
+          api1 -> api3 : get state
+          api3 --> api1 : success
+
+          api1 -> api1 : validate the state of \n the resource
+          api1 -> api1 : skip
+
+
+          api1 -> db : update my resource state \n and persist
+          db -> api1 : success
+
+          api1 -> kafka : publish Event
+          kafka --> api1 : failure [timeout/noack]
+
+          end
+          api1 --> eventbus : nack/seek offset
+    end
+
+    eventbus -> api1 : poll events
+
+      group
+        else Option1: TargetState republish
+          api1 -> db : get my resource from db
+          db --> api1 : SUCCESS
+
+          api1 -> api1 : validate the \n state of my resource
+
+              group
+              else Target State
+                api1 -> kafka : publish Event related to the target state
+                kafka --> api1 : success
+                end
+                api1 --> eventbus : commit offset / acknowledge
+        end
+
+        note over kafka
+            This can result in duplicate events
+            if consumer is unable to ack/commit offset.
+            resulting in reconsuming the same event.
+            The onus is on event consumers to handle
+            duplicate events.
+        end note
+
+        group
+            else Option2: Fallback Queue
+              api1 -> api2 : update state
+              api2 -->  api1 : success
+
+              api1 -> api3 : get state
+              api3 --> api1 : success
+
+              api1 -> api1 : validate the state of \n the resource
+              api1 -> api1 : skip
+
+
+              api1 -> db : update my resource state \n and persist
+              db -> api1 : success
+
+              group
+
+              api1 -> kafka : publish Event
+              kafka --> api1 : failure [timeout/noack]
+
+              api1 -> fq : publish event to fallback queue
+              fq --> api1 : success
+              end
+
+              api1 --> eventbus : commit offset / acknowledge
+         end
+
+         fqcon -> fq : poll messages from fallback queue
+         fqcon -> kafka : republish to Main topic
+
+
+
+deactivate api1
+
+@enduml

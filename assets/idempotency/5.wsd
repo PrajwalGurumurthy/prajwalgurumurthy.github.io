@@ -1,0 +1,60 @@
+@startuml
+
+
+title  __ SAGA - Transaction_Mgmt__\n\n
+
+participant "APPS" as apps
+boundary "Domain Event Consumer" as api1
+participant " API service 1" as api2
+participant "Data Store" as db
+
+
+
+apps -> api1 : API request
+
+activate api1
+
+    group
+    else
+      api1 -> db : get my resource from db
+      db --> api1 : SUCCESS
+
+      api1 -> api1 : validate the \n state of my resource
+
+          group
+          else Valid State
+            api1 -> api2 : update state
+            api2 -->  api1 : success
+
+            api1 -> db : update state
+            db --> api1 : Failure [timeout/5xx/gateway timeout]
+
+            note over api1
+              take compensatory action on the
+              previously performed actions
+            end note
+
+            group
+            else Compensatory Actions
+              api1 -> api2 : undo state update
+              api2 --> api1  : success
+            end
+
+            note over api1
+              The compensatory actions can be taken
+              separately after responding. but it
+              is ideal to respond after compensating Actions
+              since compensating actions can fail as well.
+            end note
+
+
+            end
+            api1 --> apps : response
+      end
+
+
+
+
+deactivate api1
+
+@enduml

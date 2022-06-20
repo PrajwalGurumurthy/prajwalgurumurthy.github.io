@@ -1,0 +1,77 @@
+@startuml
+
+
+title  __ Data change protocol Transaction_Mgmt__\n\n
+
+participant "Event Bus" as eventbus
+boundary "Domain Event Consumer service" as api1
+participant "Data Store" as db
+participant "Datastore Change protocol Listner" as dbpoller
+participant "Event Store" as kafka
+
+
+eventbus -> api1 : poll events
+
+activate api1
+
+group
+else Datastore update failure
+  api1 -> db : get my resource from db
+  db --> api1 : SUCCESS
+
+  api1 -> api1 : validate the \n state of my resource
+
+      group
+      else Valid State
+        api1 -> db : update my resource state \n and persist corresponding event atomically
+        db --> api1 : DB update failure/timeout
+        end
+        api1 --> eventbus : nack/seek offset
+
+      note over api1
+        Note that the data state if not updated,
+        nor the corresponding event is stored.
+      end Note
+  end
+
+group
+else Data and event stored atomically
+  api1 -> db : get my resource from db
+  db --> api1 : SUCCESS
+
+  note over api1
+    Since the data was not updated before,
+    the retry is similar to working on clean slate
+  end Note
+
+  api1 -> api1 : validate the \n state of my resource
+
+      group
+      else Valid State
+        api1 -> db : update my resource state \n and persist corresponding event
+        end
+        api1 --> eventbus : ack
+
+
+      group
+      else Data change protocol
+        db -> dbpoller : trigger notification of the data change
+        dbpoller --> db : read state
+        dbpoller -> kafka : publish event and mark the event as published (either externaly/in the same resource in DB)
+
+        note over dbpoller
+          If the publish mark fails,
+          we would end up republishing
+          the same evnte multiple times.
+        end Note
+
+      end
+
+  end
+
+
+
+
+deactivate api1
+
+@enduml
