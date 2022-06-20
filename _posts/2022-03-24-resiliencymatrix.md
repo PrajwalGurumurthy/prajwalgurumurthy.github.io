@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Distributed Domain Transactions in API services and Event consumers
+title: Resiliency Matrix for Cloud Native applications
 description: Resiliency is one of the key tenet of a cloud native application. It is very much a necessity to be resilient to handle variety of failures.   This is an outcome of the lessons learnt while building the cloud native apps. This is an effort to put together some guidelines for capturing resiliency elements into features upfront during the development cycle. Something that would allow us to ask the right questions during the refinement and build cycle. We are already doing many items listed below, just wanted to streamline it and  make sure it is easier to use and enforce.
 
 ---
