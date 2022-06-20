@@ -71,12 +71,12 @@ Non transient errors: [ cannot be recovered ]
 
 ![Image1]({{ site.url }}/assets/idempotency/2.png)
 
-1. Idempotent API service: RETRY
+### 1 Idempotent API service: RETRY
 * Given the idempotent nature of the resource, it is safe to retry these calls without causing any side effects on the dependent resource state.
 * In event consumers it is always safe to use eventId as the idempotentId of the API request allowing you to retry safely any number of times.
 > Example: Cancel an already cancelled order is idempotent across ECOS/OFS/QUOTE. so safe to retry any number of times.
 
-2. Non Idempotent API services but support reading resource state:  READ - VALIDATE - CALL
+### 2 Non Idempotent API services but support reading resource state:  READ - VALIDATE - CALL
 * Given the non idempotent nature , it is not safe to retry the request since it might result in errors, preventing u from recovering from errors.
 * It is adviced to read the state of the dependent resource, validate the state and then make the call to the service if required.
 * If the dependent state is already in the correct state/updated previsously,  skip and continue to the next business step
@@ -86,7 +86,7 @@ Non transient errors: [ cannot be recovered ]
 Confirming a fulfilment slot. for instance if one cannot confirm an already confirmed slot which results in API failures. Hence read the state, check if it is confirmed and then decide if API needs to be called
 Similarly for payment APIs as well. We cannot charge an already charged card so, we need to read the state of the resource and take actions
 
-3. Non Idempotent API service and no way to GET the resource state
+### 3 Non Idempotent API service and no way to GET the resource state
 * we do not want to be in this situation
 * Resolution depends on a case by case basis
 
@@ -94,7 +94,7 @@ Similarly for payment APIs as well. We cannot charge an already charged card so,
 
 ## Ensuring Transactionality with data store and event store in case of failures
 
-1. Target state- Republish Approach
+### 1 Target state- Republish Approach
 * Given a request (new/retried)
 * Read the state of the resource and if the resource is already in the target state emit an event for the given event/ API request.
 * This might result in duplicate events if retried many times. Will work in atleast once semantics w.r.t events.
@@ -113,7 +113,7 @@ Similarly for payment APIs as well. We cannot charge an already charged card so,
 * API Consumers apps/website will get an error in case of event publish failures which is not ideal reducing API availability.
 
 
-2. Fallback Queue:
+### 2 Fallback Queue:
 * It is important to ensure resiliency w.r.t event publish in kafka . [validate ISR, replication factor, broker fault tolerance, producer retries,timoeout handling]
 * Despite all retries, In case of publish failures, we can publish into the fallback queue[DRkafka/SQS/EventBus] and reconcile into main topic in kafka.
 
@@ -127,7 +127,7 @@ for instance, Imagine order checkout failing just because we could not publish t
 * We need additional fallback queue in place different from the main kafka cluster.
 
 
-3. Resource and corresponding Events are stored atomically [data model change needed]
+### 3 Resource and corresponding Events are stored atomically [data model change needed]
 * Persist the Events related to state change alongside the resource in data store.
 * Saving event & resource is a single operation, it is inherently atomic. Atomicity is ensured at the partitionkey level.
 * Publish Events asynchronously
@@ -143,7 +143,7 @@ Cons:
 * If the number of events generated are more, then the method is not ideal since the resource size can grow very quickly affecting ur reads and write performance.
 
 
-4. Event Sourcing : [Data model changes needed]
+### 4 Event Sourcing : [Data model changes needed]
 * Final State of the resource is treated as a sequence of state-changing events.
 * There is no resource as such in the data store, only events. The final state is created from the events during query.
 
@@ -155,7 +155,7 @@ Because it persists events rather than resource itself, it avoids the whole tran
 * The event store is difficult to query since it requires typical queries  to reconstruct the state of the business entities. That is likely to be complex and inefficient.
 * As a result, the application must use CQRS to implement queries. This in turn means that applications must handle eventually consistent data.
 
-5. SAGA
+### 5 SAGA
 * Prerequisite is Compensatory actions for every actions is needed in terms of API / DB calls
 * The idea is to revert all actions that were taken before the failed step, to ensure is the system is left in clean state.
 
