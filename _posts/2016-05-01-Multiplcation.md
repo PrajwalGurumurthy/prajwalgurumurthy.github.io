@@ -23,7 +23,7 @@ b=?
 I know that the computers are smart. Unfortunately we are not supposed to use addition/division to solve this.
 
 >Note: Addition/Substraction/Division cannot be used.
-example: 
+example:
    b= result/a; is not allowed
 
 Since the computers are programmed I would know if the computer broke any of the above rules.Unfortunately for the computer/anyone for that matter would not know even if I break the law since they cannot peak into my brain and figure out the algorithm.
@@ -41,7 +41,7 @@ a=5
 repeat untill result=20
     b=random()
     result=a*b;
-    if result == 20 
+    if result == 20
     print "BRAVO"
         break;
 end
@@ -68,11 +68,11 @@ Lets take a very simple example of multiplication.
 
 The green box indicates the derivative aka the effect of input ‘a’ on *.
 
-Intuitively what this means is if you increase the value of input ‘a’ by 1 unit, it is going to increase the output by 3 units(positive influence). 
+Intuitively what this means is if you increase the value of input ‘a’ by 1 unit, it is going to increase the output by 3 units(positive influence).
 For example if you increase the value of a to 6 from 5, the output is increased by 3 units to 18.
 
 Another example,
-Lets take another example of subtraction. 
+Lets take another example of subtraction.
 
 ![Image2]({{ site.url }}/assets/ml1/2m2.png)
 
@@ -80,7 +80,7 @@ Lets analyze the effect of input ‘b’ on function ‘-’ . The negative grad
 For example if you increase the input b by 1 unit say b = 4 , the output is reduced by 1 unit i.e . output = 1.
 
 
->This is just getting better and better 
+>This is just getting better and better
 
 Lets get back to the man vs the machines battle. Does the following computation graph aka function chain aka multiplication followed by subtraction ;)  ring any bells?
 
@@ -95,12 +95,12 @@ If you increase the input b by 1 unit the output will decrease by 5 units(negati
 ![Image4]({{ site.url }}/assets/ml1/2m4.png)
 
 >The red colored minus function is our loss function which determines how well we chose the value for b.
-Given: a=5   b=?   res=20 
+Given: a=5   b=?   res=20
 
 Lets start with a some random number 3 for “b”. (I assumed a close number to make the math easy).
 
 {% highlight text %}
-a=5 
+a=5
 b=3
 res=15
 loss=5
@@ -118,7 +118,7 @@ newb = 3 – (-0.05)
 newb = 3 + 0.05
 newb = 3.05
 
-a=5 
+a=5
 b=3.05
 res=15.25
 loss=4.75
@@ -130,7 +130,7 @@ newb = 3.05 – (-0.05)
 newb = 3.05 + 0.05
 newb = 3.10
 
-a=5 
+a=5
 b=3.10
 res=15.50
 loss=4.50
@@ -141,12 +141,11 @@ loss=4.50
 
 Notice the loss function value which is getting reduced every iteration. After a few number of iteration We arrive at the optimal solution.
 
-a=5 
+a=5
 b=4
 res=20
-loss=20
+loss=0
 
 > Pick-and-shovel if the numbers are changed.
 
 Looks like the computer has found a method which looks efficient(which is still debatable). I might definitely beat the machine for the above example. But I might have to Pick-and-shovel if the numbers are changed. The same approach can yield better results if implemented efficiently and using some better update methods.
-

@@ -5,6 +5,7 @@ description: This post tries to highlight the self healing mechanism of a cloud 
 Here we specifically focus on the event consumers a.k.a services that react to some event in the system and take some action. Along with recovery mechanism we also touch a little bit on the importance of circuit breaking to reduce the number of events that needs to be recovered.
 
 ---
+
 ## Why?
 Most enterprise platforms are event driven. Event driven services are at the core of the design that drives the business. Having fault tolerance and auto recovery mechanism is a must specially when u are dealing with business and operations critical functionality. The reason why it is important to design auto self healing services is the fact that manual recovery is extremely tedious and time intensive which can have a significant business impact.
 
